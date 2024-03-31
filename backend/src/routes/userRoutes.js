@@ -6,10 +6,12 @@ const userController = require('../controllers/userController');
 router.post('/register', userController.registerUser);
 
 // GET request to fetch all users
-router.get('/', userController.getAllUsers);
+router.get('/all', userController.getAllUsers);
 
 // GET request to fetch a specific user by ID
 router.get('/:id', userController.getUserById);
+
+router.post('/login', userController.loginUser)
 
 // Export the router
 module.exports = router;

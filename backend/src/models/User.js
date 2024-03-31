@@ -25,11 +25,19 @@ const userSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     default: Date.now
+  },
+  wagered: {
+    type: Number,
+    default: 0
+  },
+  level: {
+    type: Number,
+    default: 0
   }
 });
 
 // Middleware to hash the password before saving it to the database
-userSchema.pre('save', async (next) =>{
+userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 8);
   }
@@ -37,7 +45,7 @@ userSchema.pre('save', async (next) =>{
 });
 
 // Method to check if the entered password matches the hashed password in the database
-userSchema.methods.isPasswordMatch = async (password) => {
+userSchema.methods.isPasswordMatch = async function(password) {
   return bcrypt.compare(password, this.password);
 };
 
