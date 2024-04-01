@@ -1,7 +1,7 @@
 # Gamba
 
 Gamba is a cutting-edge, real-time gambling website that offers a thrilling
-gaming experience through its initial game, High Low. Developed with the MERN
+gaming experience through its initial game, High Low. Developed with the MESN
 stack (MongoDB, Express, Svelte, Node.js), Gamba is designed to deliver a
 seamless and intuitive gambling experience, complete with user profiles, game
 history with pagination, and secure authentication.
@@ -29,11 +29,10 @@ history with pagination, and secure authentication.
 
 To get started with Gamba, follow these steps:
 
-1. Clone the repository:
-   `bash git clone https://github.com/yourusername/gamba.git `
-2. Install dependencies for the backend: `bash cd backend npm install `
-3. Start the backend server: `bash npm start `
-4. Install dependencies for the frontend: `bash cd ../frontend npm install`
-5. Start the frontend application: `bash npm run dev `
+1. Clone the repository: `git clone https://github.com/michaeldsim/gamba.git `
+2. Install dependencies for the backend: `cd backend npm install `
+3. Start the backend server: `npm start `
+4. Install dependencies for the frontend: `cd ../frontend npm install`
+5. Start the frontend application: `npm run dev `
 
 Now, navigate to `http://localhost:8080` to enjoy the Gamba experience.
