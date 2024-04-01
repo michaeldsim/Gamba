@@ -36,4 +36,4 @@ To get started with Gamba, follow these steps:
 4. Install dependencies for the frontend: `bash cd ../frontend npm install`
 5. Start the frontend application: `bash npm run dev `
 
-Now, navigate to `http://localhost:4000` to enjoy the Gamba experience.
+Now, navigate to `http://localhost:8080` to enjoy the Gamba experience.
