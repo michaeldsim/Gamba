@@ -1,62 +1,71 @@
 <script>
-  import { Link, Router, Route } from 'svelte-routing';
-  import Home from './routes/Home.svelte';
-  import Login from './routes/Login.svelte';
-  import { isAuthenticated, user } from './stores/auth';
-  import Register from './routes/Register.svelte';
-  import Profile from './routes/Profile.svelte';
-  import HighLow from './routes/games/HighLow.svelte';
+  import { Link, Router, Route } from 'svelte-routing'
+  import Home from './routes/Home.svelte'
+  import Login from './routes/Login.svelte'
+  import { auth, checkAuth, user } from './stores/auth'
+  import Register from './routes/Register.svelte'
+  import Profile from './routes/Profile.svelte'
+  import HighLow from './routes/games/HighLow.svelte'
+  import Leaderboard from './routes/Leaderboard.svelte'
+  import { onDestroy, onMount } from 'svelte'
+  import UserProfile from './routes/UserProfile.svelte'
 
-  (async () => {
-    try {
-      const verifySessionResponse = await fetch('http://localhost:4000/auth/verifySession', {
-          method: 'GET',
-          credentials: 'include',
-      });
+  onMount(async () => {
+    await checkAuth()
+  })
 
-      if (verifySessionResponse.ok) {
-          const verifySessionData = await verifySessionResponse.json();
+  const logout = async () => {
+    const res = await fetch('http://localhost:4000/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      if (res.ok) {
+        auth.set({ isAuthenticated: false, loading: false })
+        user.set({})
+      }
+    })
+  }
 
-          // update user data
-          const userDataResponse = await fetch(`http://localhost:4000/user/${verifySessionData.id}`, {
-          method: 'GET',
-          credentials: 'include'});
+  let userBalance = ''
 
-          const userData = await userDataResponse.json();
-            
-          user.set(userData);
-          isAuthenticated.set(true);
-        } else {
-          console.log("Session not valid or not authenticated");
-          isAuthenticated.set(false);
-          user.set({});
-        }
-      } catch (error) {
-        console.error("Error verifying session:", error);
-        isAuthenticated.set(false);
-    }
-  })();
+  const unsubscribe = user.subscribe($user => {
+    userBalance = $user.balance
+  })
+
+  $: trimmedBalance = userBalance ? parseFloat(userBalance).toFixed(2) : '0.00'
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
-
-
-<Router >
+<Router>
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-    <Link to="/" class="navbar-brand ms-2">Gamba</Link>
+    <Link to="/" class="navbar-brand ms-2 me-3">Gamba</Link>
+    <Link to="/leaderboard" class="navbar-text me-3">Leaderboard</Link>
     <div class="ms-auto d-flex align-items-center">
-      {#if $isAuthenticated}
-      <div class="navbar-text me-3">Welcome, <a href="/profile">{$user.username}</a></div>
-      <div class="navbar-text me-3"> Level: {$user.level}</div>
-      <div class="navbar-text me-3"> Balance: ${$user.balance}</div>
+      {#if $auth.isAuthenticated && !$auth.loading}
+        <div class="navbar-text me-3">
+          Welcome, <a href="/profile">{$user.username}</a>
+        </div>
+        <div class="navbar-text me-3">Level: {$user.level}</div>
+        <div class="navbar-text me-3">Balance: ${trimmedBalance}</div>
+        <button on:click={logout} class="btn btn-secondary me-3">Log out</button
+        >
       {:else}
-      <Link to="/login" class="navbar-nav">Login</Link>
+        <Link to="/login" class="navbar-nav me-3">Login</Link>
       {/if}
     </div>
   </nav>
 
-	<Route path="/" component={Home} />
-	<Route path="/login" component={Login} />
+  <Route path="/" component={Home} />
+  <Route path="/login" component={Login} />
   <Route path="/register" component={Register} />
   <Route path="/profile" component={Profile} />
   <Route path="/highlow" component={HighLow} />
+  <Route path="/leaderboard" component={Leaderboard} />
+  <Route path="/user/:id" let:params component={UserProfile} />
 </Router>

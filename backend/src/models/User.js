@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
 
 // Define the user schema
 const userSchema = new mongoose.Schema({
@@ -8,48 +8,48 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Username is required'],
     unique: true,
     trim: true,
-    maxlength: [20, 'Username cannot exceed 20 characters']
+    maxlength: [20, 'Username cannot exceed 20 characters'],
   },
   password: {
     type: String,
-    required: [true, 'Password is required']
+    required: [true, 'Password is required'],
   },
   balance: {
     type: Number,
-    default: 100
+    default: 100,
   },
   daily_last_claimed: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   created_at: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   wagered: {
     type: Number,
-    default: 0
+    default: 0,
   },
   level: {
     type: Number,
-    default: 0
-  }
-});
+    default: 0,
+  },
+})
 
 // Middleware to hash the password before saving it to the database
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 8);
+    this.password = await bcrypt.hash(this.password, 8)
   }
-  next();
-});
+  next()
+})
 
 // Method to check if the entered password matches the hashed password in the database
-userSchema.methods.isPasswordMatch = async function(password) {
-  return bcrypt.compare(password, this.password);
-};
+userSchema.methods.isPasswordMatch = async function (password) {
+  return bcrypt.compare(password, this.password)
+}
 
 // Create the model from the schema and export it
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema)
 
-module.exports = User;
+module.exports = User

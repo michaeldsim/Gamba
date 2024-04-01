@@ -1,14 +1,9 @@
 <script>
-  import { navigate, useHistory } from 'svelte-routing'
-  import { auth, user } from '../stores/auth'
-  import { now } from 'svelte/internal'
+  import { onMount } from 'svelte'
 
-  $: if (!$auth.isAuthenticated && !$auth.loading) {
-    navigate('/')
-  }
+  export let id
 
-  let wageredTowardsNextLevel
-  let progressPercentage
+  $: userData = {}
 
   let gamesData = {
     page: 1,
@@ -18,7 +13,6 @@
     data: [],
   }
 
-  // extract these into a util class
   async function fetchGames(page, id) {
     await fetch(
       `http://localhost:4000/games/${id}?page=${page}&limit=${gamesData.limit}`,
@@ -31,7 +25,7 @@
   }
 
   function changePage(page) {
-    fetchGames(page, $user._id)
+    fetchGames(page, id)
   }
 
   function gameResultToString(result) {
@@ -47,58 +41,44 @@
     }
   }
 
-  async function claimDaily() {
-    const res = await fetch('http://localhost:4000/user/claimDaily', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  onMount(async () => {
+    const res = await fetch(`http://localhost:4000/user/${id}`, {
+      method: 'GET',
     })
 
     if (res.ok) {
-      const data = res.json()
-      user.update(currentUser => {
-        currentUser.balance = parseFloat(data.updatedBalance).toFixed(2)
-        return currentUser
-      })
+      userData = await res.json()
+      fetchGames(0, id)
     }
-  }
+  })
 
-  let dailyClaimable = false
+  let wageredTowardsNextLevel
+  let progressPercentage
 
-  $: if (Object.keys($user).length > 0) {
+  $: if (Object.keys(userData).length > 0) {
     // Calculate the progress towards the next level
-    wageredTowardsNextLevel = $user.wagered % 100
+    wageredTowardsNextLevel = userData.wagered % 100
     progressPercentage = (wageredTowardsNextLevel / 100) * 100
-    dailyClaimable =
-      new Date($user.daily_last_claimed).getTime() - new Date().getTime() >
-      24 * 60 * 60 * 1000 // checks if 24 hours has passed
-
-    console.log(dailyClaimable)
-    ;(async () => {
-      await fetchGames(0, $user._id)
-    })()
   }
 </script>
 
-{#if $user && Object.keys($user).length > 0}
+{#if userData && Object.keys(userData).length > 0}
   <div class="container my-5">
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <h1 class="mb-4">Profile</h1>
         <div class="mb-3">
-          <h2>{$user.username}</h2>
+          <h2>{userData.username}</h2>
         </div>
         <div class="mb-3">
-          <strong>Balance:</strong> ${parseFloat($user.balance).toFixed(2)}
+          <strong>Balance:</strong> ${parseFloat(userData.balance).toFixed(2)}
         </div>
         <div class="mb-3">
-          <strong>Wagered:</strong> ${$user.wagered}
+          <strong>Wagered:</strong> ${userData.wagered}
         </div>
         <div class="mb-3">
           <strong>Level:</strong>
-          {$user.level}
+          {userData.level}
           <div class="progress">
             <div
               class="progress-bar"
@@ -113,18 +93,13 @@
             Wager {100 - wageredTowardsNextLevel} more to reach the next level.
           </p>
         </div>
-        <button
-          class="btn btn-primary mb-2"
-          disabled={!dailyClaimable}
-          on:click={claimDaily}>Claim Daily Cash</button
-        >
         <div class="mb-3">
           <strong>Daily Last Claimed:</strong>
-          {new Date($user.daily_last_claimed).toLocaleString()}
+          {new Date(userData.daily_last_claimed).toLocaleString()}
         </div>
         <div>
           <strong>Account Created:</strong>
-          {new Date($user.created_at).toLocaleString()}
+          {new Date(userData.created_at).toLocaleString()}
         </div>
         <div class="d-flex flex-column align-items-start mb-3">
           <h1 class="mt-3">Game History</h1>
