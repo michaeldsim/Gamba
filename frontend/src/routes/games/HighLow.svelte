@@ -47,7 +47,7 @@
   }
 
   async function makeGuess(isHigher) {
-    const response = await fetch(`${backendUrl}/games/highlow`, {
+    const response = await fetch(`${$backendUrl}/games/highlow`, {
       method: 'POST',
       credentials: 'include',
       headers: {

@@ -8,7 +8,7 @@
   let password = ''
 
   const register = async () => {
-    const response = await fetch(`${backendUrl}/auth/register`, {
+    const response = await fetch(`${$backendUrl}/auth/register`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

@@ -21,7 +21,7 @@
   // extract these into a util class
   async function fetchGames(page, id) {
     await fetch(
-      `${backendUrl}/games/${id}?page=${page}&limit=${gamesData.limit}`,
+      `${$backendUrl}/games/${id}?page=${page}&limit=${gamesData.limit}`,
     )
       .then(response => response.json())
       .then(data => {
@@ -48,7 +48,7 @@
   }
 
   async function claimDaily() {
-    const res = await fetch(`${backendUrl}/user/claimDaily`, {
+    const res = await fetch(`${$backendUrl}/user/claimDaily`, {
       method: 'POST',
       credentials: 'include',
       headers: {
