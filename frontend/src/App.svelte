@@ -3,6 +3,7 @@
   import Home from './routes/Home.svelte'
   import Login from './routes/Login.svelte'
   import { auth, checkAuth, user } from './stores/auth'
+  import { backendUrlFound, backendUrl } from './stores/backend'
   import Register from './routes/Register.svelte'
   import Profile from './routes/Profile.svelte'
   import HighLow from './routes/games/HighLow.svelte'
@@ -11,11 +12,16 @@
   import UserProfile from './routes/UserProfile.svelte'
 
   onMount(async () => {
-    await checkAuth()
+    if (!$backendUrlFound) {
+      backendUrl.set(process.env.BACKEND_URL)
+      backendUrlFound.set(true)
+    }
+
+    await checkAuth($backendUrl)
   })
 
   const logout = async () => {
-    const res = await fetch('http://localhost:4000/auth/logout', {
+    const res = await fetch(`${$backendUrl}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -32,12 +38,16 @@
   let userBalance = ''
 
   const unsubscribe = user.subscribe($user => {
-    userBalance = $user.balance
+    if (Object.keys($user).length > 0) {
+      console.log('subscribed')
+      userBalance = $user.balance
+    }
   })
 
   $: trimmedBalance = userBalance ? parseFloat(userBalance).toFixed(2) : '0.00'
 
   onDestroy(() => {
+    console.log('unsubscribed')
     unsubscribe()
   })
 </script>
@@ -67,5 +77,5 @@
   <Route path="/profile" component={Profile} />
   <Route path="/highlow" component={HighLow} />
   <Route path="/leaderboard" component={Leaderboard} />
-  <Route path="/user/:id" let:params component={UserProfile} />
+  <Route path="/user/:id" component={UserProfile} />
 </Router>

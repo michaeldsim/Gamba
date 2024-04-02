@@ -1,5 +1,6 @@
 <script>
   import { user } from '../../stores/auth'
+  import { backendUrl } from '../../stores/backend'
 
   let chosenNumber = ''
   let wager = ''
@@ -46,11 +47,7 @@
   }
 
   async function makeGuess(isHigher) {
-    const profitMultiplier = isHigher
-      ? calculateProfitMultiplier((100 - chosenNumber) / 100)
-      : calculateProfitMultiplier(chosenNumber / 99)
-
-    const response = await fetch('http://localhost:4000/games/highlow', {
+    const response = await fetch(`${backendUrl}/games/highlow`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -66,11 +63,14 @@
     if (response.ok) {
       const data = await response.json()
       message = `${data.message} The result number was ${data.resultNumber}.`
-      // bug: it only updates after the first update is called so the balance in nav bar is behind one update
-      user.update(currentUser => {
-        currentUser.balance = data.updatedBalance.toFixed(2)
-        return currentUser
-      })
+      // Update user balance with spread syntax
+      user.update(currentUser => ({
+        ...currentUser,
+        balance: data.updatedBalance.toFixed(2),
+      }))
+    } else if (response.status === 400) {
+      const data = await response.json()
+      message = data.message
     } else {
       message = 'An error occurred. Please try again.'
     }

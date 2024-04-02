@@ -3,10 +3,10 @@ import { writable } from 'svelte/store';
 export const auth = writable({ isAuthenticated: false, loading: true })
 export const user = writable({});
 
-export async function checkAuth() {
+export async function checkAuth(backendUrl) {
   try {
     const verifySessionResponse = await fetch(
-      'http://localhost:4000/auth/verifySession',
+      `${backendUrl}/auth/verifySession`,
       {
         method: 'GET',
         credentials: 'include',
@@ -19,7 +19,7 @@ export async function checkAuth() {
       // TODO: cache this because we are calling this on every page
       // update user data
       const userDataResponse = await fetch(
-        `http://localhost:4000/user/${verifySessionData.id}`,
+        `${backendUrl}/user/${verifySessionData.id}`,
         {
           method: 'GET',
           credentials: 'include',

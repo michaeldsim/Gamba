@@ -15,6 +15,10 @@ router.post(
     const user = req.user
     const { guess, chosenNumber, wager } = req.body
 
+    if(wager > user.balance) {
+        return res.status(400).json( { message: "Wager cannot be higher than the balance."} )
+    }
+
     // Simulate number generation and calculate win/loss
     const resultNumber = Math.floor(Math.random() * 101)
     const winChance = guess === 'higher' ? 100 - chosenNumber : chosenNumber

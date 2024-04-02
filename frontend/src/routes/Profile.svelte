@@ -1,7 +1,7 @@
 <script>
-  import { navigate, useHistory } from 'svelte-routing'
+  import { navigate } from 'svelte-routing'
   import { auth, user } from '../stores/auth'
-  import { now } from 'svelte/internal'
+  import { backendUrl } from '../stores/backend'
 
   $: if (!$auth.isAuthenticated && !$auth.loading) {
     navigate('/')
@@ -21,7 +21,7 @@
   // extract these into a util class
   async function fetchGames(page, id) {
     await fetch(
-      `http://localhost:4000/games/${id}?page=${page}&limit=${gamesData.limit}`,
+      `${backendUrl}/games/${id}?page=${page}&limit=${gamesData.limit}`,
     )
       .then(response => response.json())
       .then(data => {
@@ -48,7 +48,7 @@
   }
 
   async function claimDaily() {
-    const res = await fetch('http://localhost:4000/user/claimDaily', {
+    const res = await fetch(`${backendUrl}/user/claimDaily`, {
       method: 'POST',
       credentials: 'include',
       headers: {
