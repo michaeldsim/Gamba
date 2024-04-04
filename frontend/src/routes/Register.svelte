@@ -8,12 +8,15 @@
   let password = ''
 
   const register = async () => {
-    const response = await fetch(`${$backendUrl}/auth/register`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
+    const response = await fetch(
+      `${process.env.VITE_BACKEND_URL}/auth/register`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      },
+    )
 
     if (response.ok) {
       const userData = await response.json()

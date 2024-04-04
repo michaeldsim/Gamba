@@ -1,6 +1,5 @@
 <script>
   import { user } from '../../stores/auth'
-  import { backendUrl } from '../../stores/backend'
 
   let chosenNumber = ''
   let wager = ''
@@ -47,18 +46,21 @@
   }
 
   async function makeGuess(isHigher) {
-    const response = await fetch(`${$backendUrl}/games/highlow`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${process.env.VITE_BACKEND_URL}/games/highlow`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          guess: isHigher ? 'higher' : 'lower',
+          chosenNumber,
+          wager,
+        }),
       },
-      body: JSON.stringify({
-        guess: isHigher ? 'higher' : 'lower',
-        chosenNumber,
-        wager,
-      }),
-    })
+    )
 
     if (response.ok) {
       const data = await response.json()

@@ -2,13 +2,12 @@
   import { onMount } from 'svelte'
   import { auth, user } from '../stores/auth'
   import { navigate } from 'svelte-routing'
-  import { backendUrl } from '../stores/backend'
 
   let username = ''
   let password = ''
 
   const login = async () => {
-    const response = await fetch(`${$backendUrl}/auth/login`, {
+    const response = await fetch(`${process.env.VITE_BACKEND_URL}/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

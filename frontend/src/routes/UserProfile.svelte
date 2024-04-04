@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte'
-  import { backendUrl } from '../stores/backend'
 
   export let id
 
@@ -16,7 +15,7 @@
 
   async function fetchGames(page, id) {
     await fetch(
-      `${$backendUrl}/games/${id}?page=${page}&limit=${gamesData.limit}`,
+      `${process.env.VITE_BACKEND_URL}/games/${id}?page=${page}&limit=${gamesData.limit}`,
     )
       .then(response => response.json())
       .then(data => {
@@ -43,7 +42,7 @@
   }
 
   onMount(async () => {
-    const res = await fetch(`${$backendUrl}/user/${id}`, {
+    const res = await fetch(`${process.env.VITE_BACKEND_URL}/user/${id}`, {
       method: 'GET',
     })
 

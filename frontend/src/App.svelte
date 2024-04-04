@@ -13,7 +13,7 @@
 
   onMount(async () => {
     if (!$backendUrlFound) {
-      backendUrl.set(process.env.BACKEND_URL)
+      backendUrl.set(process.env.VITE_BACKEND_URL)
       backendUrlFound.set(true)
     }
 
@@ -21,7 +21,7 @@
   })
 
   const logout = async () => {
-    const res = await fetch(`${$backendUrl}/auth/logout`, {
+    const res = await fetch(`${process.env.VITE_BACKEND_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {
