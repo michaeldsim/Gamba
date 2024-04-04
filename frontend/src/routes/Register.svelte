@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { user } from '../stores/auth'
   import { navigate } from 'svelte-routing'
-  import { backendUrl } from '../stores/backend'
 
   let username = ''
   let password = ''

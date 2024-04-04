@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte'
   import { navigate } from 'svelte-routing'
-  import { backendUrl } from '../stores/backend'
 
   let users = []
   onMount(async () => {
-    const response = await fetch(`${$backendUrl}/user/all?page=1&limit=50`)
+    const response = await fetch(
+      `${process.env.VITE_BACKEND_URL}/user/all?page=1&limit=50`,
+    )
     if (response.ok) {
       const data = await response.json()
       users = data.data.sort((a, b) => b.balance - a.balance)
