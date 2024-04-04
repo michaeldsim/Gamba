@@ -3,7 +3,6 @@
   import Home from './routes/Home.svelte'
   import Login from './routes/Login.svelte'
   import { auth, checkAuth, user } from './stores/auth'
-  import { backendUrlFound, backendUrl } from './stores/backend'
   import Register from './routes/Register.svelte'
   import Profile from './routes/Profile.svelte'
   import HighLow from './routes/games/HighLow.svelte'
@@ -12,12 +11,7 @@
   import UserProfile from './routes/UserProfile.svelte'
 
   onMount(async () => {
-    if (!$backendUrlFound) {
-      backendUrl.set(process.env.VITE_BACKEND_URL)
-      backendUrlFound.set(true)
-    }
-
-    await checkAuth($backendUrl)
+    await checkAuth(process.env.VITE_BACKEND_URL)
   })
 
   const logout = async () => {
